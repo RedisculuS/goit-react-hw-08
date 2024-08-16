@@ -34,11 +34,11 @@ function App() {
         <Route index element={<HomePage />} />
         <Route
           path="register"
-          element={<RestrictedRoute redirectTo='/' component={RegistrationPage} />}
+          element={<RestrictedRoute redirectTo='/login' component={RegistrationPage} />}
         />
         <Route
           path="login"
-          element={<RestrictedRoute redirectTo='/' component={LoginPage} />}
+          element={<RestrictedRoute redirectTo='/login' component={LoginPage} />}
         />
         <Route
           path="contacts"
