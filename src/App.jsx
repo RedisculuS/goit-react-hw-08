@@ -1,27 +1,52 @@
-import "./App.css";
-import ContactForm from "./components/ContactForm/ContactForm.jsx";
-import SearchBox from "./components/SearchBox/SearchBox.jsx";
-import ContactList from "./components/ContactList/ContactList.jsx";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchContacts } from "./redux/contactsOps";
-import { selectNameFilter } from "./redux/filtersSlice";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout';
+
+const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
+const LoginPage = lazy(()=> import('./pages/LoginPage/LoginPage'));
+const RegistrationPage = lazy(()=>import('./pages/RegistrationPage/RegistrationPage'));
+const ContactsPage = lazy(()=>import('./pages/ContactsPage/ContactsPage'));
+
+import PrivateRoute from './components/PrivateRoute';
+import RestrictedRoute from './components/RestrictedRoute';
+import { refreshUser } from './redux/auth/operations';
+import { selectIsRefreshing, selectIsLoggedIn } from './redux/auth/selectors';
 
 function App() {
   const dispatch = useDispatch();
-  const search = useSelector(selectNameFilter);
+
+  const isRefreshing = useSelector(selectIsRefreshing);
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(refreshUser());
   }, [dispatch]);
 
+  if(isRefreshing) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <div className="App">
-      <h1>Phonebook</h1>
-      <ContactForm />
-      <SearchBox />
-      <ContactList />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route
+          path="register"
+          element={<RestrictedRoute redirectTo='/' component={RegistrationPage} />}
+        />
+        <Route
+          path="login"
+          element={<RestrictedRoute redirectTo='/' component={LoginPage} />}
+        />
+        <Route
+          path="contacts"
+          element={<PrivateRoute redirectTo='/contacts' component={ContactsPage} />}
+        />
+      </Route>
+    </Routes>
+    </Suspense>
+    
   );
 }
 
