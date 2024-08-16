@@ -2,6 +2,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/auth/operations';
+import css from './LoginForm.module.css'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Required'),
@@ -23,18 +24,18 @@ const LoginForm = () => {
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
-        <Form>
+        <Form className={css.form}>
           <div>
             <label htmlFor="email">Email</label>
-            <Field type="email" name="email" />
-            <ErrorMessage name="email" component="div" />
+            <Field type="email" name="email" className={css.field}/>
+            <ErrorMessage name="email" component="div" className={css.error}/>
           </div>
           <div>
             <label htmlFor="password">Password</label>
-            <Field type="password" name="password" />
-            <ErrorMessage name="password" component="div" />
+            <Field type="password" name="password" className={css.field}/>
+            <ErrorMessage name="password" component="div" className={css.error}/>
           </div>
-          <button type="submit" disabled={isSubmitting}>
+          <button type="submit" disabled={isSubmitting} className={css.sumbitBtn}> 
             Log In
           </button>
         </Form>
